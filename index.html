@@ -10,7 +10,7 @@
     <meta property="og:image" content="./main.jpg"> 
 
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=904cjhr2kv"></script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=83pjbjhgnl"></script>
 
     <style>
         /* 기본 스타일 */
@@ -165,47 +165,41 @@
     </div>
 
     <script>
+
+        function initMap() {
+            var placeLat = 37.413371; 
+            var placeLng = 127.098628;
+
+            var mapOptions = {
+                center: new naver.maps.LatLng(placeLat, placeLng),
+                zoom: 16,
+                // 모바일에서 손가락 두개로 확대/축소 하도록 설정 (스크롤 방해 방지)
+                pinchZoom: true,
+                scrollWheel: false
+            };
+
+            var map = new naver.maps.Map('naver-map', mapOptions);
+
+            var marker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(placeLat, placeLng),
+                map: map,
+                animation: naver.maps.Animation.DROP // 마커가 툭 떨어지는 효과
+            });
+        }
         // -------------------------
         // 1. 네이버 지도 설정
         // -------------------------
         // 호텔 파라다이스 위치 (위도, 경도) - 구글맵 등에서 확인하여 수정하세요
-        var placeLat = 37.413371; 
-        var placeLng = 127.098628;
+
  
-        // 지도가 로드되지 않을 경우를 대비한 예외처리 (API ID 없을 때)
-        try {
-            var mapOptions = {
-                center: new naver.maps.LatLng(placeLat, placeLng),
-                zoom: 16 // 확대 레벨
-            };
-            var map = new naver.maps.Map('naver-map', mapOptions);
-
-            // 마커 찍기
-            var marker = new naver.maps.Marker({
-                position: new naver.maps.LatLng(placeLat, placeLng),
-                map: map
-            });
-        } catch (e) {
-            console.log("네이버 지도 API 키가 없거나 설정 오류입니다.");
-            document.getElementById('naver-map').innerHTML = "<div style='padding-top:130px;'>지도를 불러오려면 API Key가 필요합니다.<br>(또는 이미지로 대체하세요)</div>";
-        }
-
-        // -------------------------
-        // 2. 갤러리 모달(팝업) 기능
-        // -------------------------
-        // 사진 경로 배열 (파일명 수정 시 여기도 같이 수정해줘야 함)
-        var images = [
-            "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg"
-        ];
+        // 2. 갤러리 및 복사 기능
+        var images = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg"];
         var currentIdx = 0;
 
         function openModal(idx) {
             currentIdx = idx;
-            var modal = document.getElementById("imageModal");
-            var modalImg = document.getElementById("modalImg");
-            
-            modal.style.display = "flex"; // 팝업 열기
-            modalImg.src = images[currentIdx]; // 클릭한 사진 보여주기
+            document.getElementById("imageModal").style.display = "flex";
+            document.getElementById("modalImg").src = images[currentIdx];
         }
 
         function closeModal() {
@@ -213,23 +207,35 @@
         }
 
         function changeSlide(n) {
-            currentIdx += n;
-            // 처음보다 뒤로 가면 맨 마지막 사진으로
-            if (currentIdx < 0) { currentIdx = images.length - 1; }
-            // 마지막보다 앞으로 가면 맨 처음 사진으로
-            if (currentIdx >= images.length) { currentIdx = 0; }
-            
+            currentIdx = (currentIdx + n + images.length) % images.length;
             document.getElementById("modalImg").src = images[currentIdx];
         }
 
-        // 모달 바깥 영역(검은 배경) 클릭 시 닫기
-        window.onclick = function(event) {
-            var modal = document.getElementById("imageModal");
-            if (event.target == modal) {
-                closeModal();
-            }
+        function copyAccount(accNum) {
+            navigator.clipboard.writeText(accNum).then(() => {
+                const msg = document.getElementById('copy-msg');
+                msg.style.display = 'block';
+                setTimeout(() => { msg.style.display = 'none'; }, 2000);
+            });
         }
 
+        // 3. 페이지 로드 시 실행 (중요: 에러 방지용)
+        window.addEventListener('DOMContentLoaded', function() {
+            // 네이버 지도가 로드되었는지 확인 후 실행
+            if (typeof naver !== 'undefined' && naver.maps) {
+                initMap();
+            } else {
+                // 만약 로드가 안되었다면 0.5초 뒤에 한 번 더 시도
+                setTimeout(function() {
+                    if (typeof naver !== 'undefined') initMap();
+                }, 500);
+            }
+        });
+
+        // 모달 바깥 클릭 시 닫기
+        window.addEventListener('click', function(e) {
+            if (e.target == document.getElementById("imageModal")) closeModal();
+        });
         // 계좌번호 복사 스크립트
         function copyAccount(accNum) {
             navigator.clipboard.writeText(accNum).then(() => {
