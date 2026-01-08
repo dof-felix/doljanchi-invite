@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아가의 첫 생일파티에 초대합니다</title>
+    
+    <meta property="og:title" content="지한이의 돌잔치에 초대합니다">
+    <meta property="og:description" content="2026년 2월 7일, 우리 지한이의 첫 생일을 함께 축하해주세요.">
+    <meta property="og:image" content="./main.jpg"> 
+
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=904cjhr2kv"></script>
+
+    <style>
+        /* 기본 스타일 */
+        body { font-family: 'Gowun Dodum', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; color: #555; line-height: 1.8; text-align: center; }
+        .container { max-width: 480px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative; }
+        
+        /* 메인 및 섹션 */
+        .hero { position: relative; width: 100%; }
+        .hero img { width: 100%; height: auto; display: block; border-radius: 0 0 30px 30px; }
+        .title-overlay { padding: 40px 20px; }
+        .title-overlay h1 { font-size: 1.5rem; color: #333; margin-bottom: 10px; }
+        .date-text { color: #d4a373; font-weight: bold; font-size: 1.1rem; }
+        .section { padding: 40px 20px; border-bottom: 1px dashed #eee; }
+        .greeting-title { font-size: 1.2rem; color: #333; margin-bottom: 20px; font-weight: bold; }
+        .baby-info { margin-top: 30px; font-size: 1.1rem; }
+        .baby-info span { font-weight: bold; color: #333; }
+
+        /* 갤러리 그리드 */
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 10px; }
+        .gallery-grid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; cursor: pointer; transition: opacity 0.3s; }
+        .gallery-grid img:hover { opacity: 0.8; }
+
+        /* 지도 영역 */
+        #naver-map { width: 100%; height: 300px; margin: 20px 0; border-radius: 10px; border: 1px solid #ddd; }
+
+        /* 버튼 및 기타 */
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        .btn { padding: 10px 20px; background-color: #d4a373; color: white; text-decoration: none; border-radius: 20px; font-size: 0.9rem; border: none; cursor: pointer; }
+        .btn-outline { background-color: white; border: 1px solid #d4a373; color: #d4a373; }
+        .account-box { background-color: #faf5ef; padding: 20px; border-radius: 10px; margin-top: 20px; }
+        .account-number { font-size: 1.1rem; font-weight: bold; margin: 10px 0; cursor: pointer; }
+        .copy-alert { font-size: 0.8rem; color: #d4a373; display: none; }
+        footer { padding: 30px 20px; font-size: 0.8rem; background-color: #f1f1f1; color: #999; }
+
+        /* [추가 기능] 이미지 확대 모달창 (Lightbox) */
+        .modal {
+            display: none; /* 평소엔 숨김 */
+            position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); /* 검은 배경 불투명도 */
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            max-width: 90%; max-height: 80vh;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        .close {
+            position: absolute; top: 20px; right: 30px;
+            color: #f1f1f1; font-size: 40px; font-weight: bold;
+            cursor: pointer; z-index: 1001;
+        }
+        /* 화살표 버튼 */
+        .arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            color: white; font-size: 3rem; font-weight: bold;
+            cursor: pointer; user-select: none;
+            background-color: rgba(0,0,0,0.3); /* 반투명 배경 */
+            padding: 10px; border-radius: 50%;
+            width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background-color 0.3s;
+        }
+        .arrow:hover { background-color: rgba(0,0,0,0.6); }
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        @media screen and (max-width: 600px) {
+            .arrow { font-size: 2rem; width: 40px; height: 40px; padding: 5px;}
+            .prev { left: 10px; }
+            .next { right: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="hero">
+            <img src="main1.jpg" alt="메인 아이 사진">
+        </div>
+
+        <div class="title-overlay">
+            <div class="date-text">2026. 02. 07. Sat. PM 12:00</div>
+            <h1>아빠 강윤기 & 엄마 이예솔의<br>보물, 지한이의 첫 생일</h1>
+        </div>
+
+        <div class="section">
+            <div class="greeting-title">초 대 합 니 다</div>
+            <p>
+                열 달의 설렘으로 만난 아이가<br>
+                어느덧 첫 번째 생일을 맞이했습니다.<br><br>
+                사랑으로 무럭무럭 자라는<br>
+                지한이의 앞날을<br>
+                함께 축복해 주시면 감사하겠습니다.
+            </p>
+
+            <div class="baby-info">
+                아빠 <span>강윤기</span> · 엄마 <span>이예솔</span> 의 첫째 <span>강지한</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="greeting-title">G A L L E R Y</div>
+            <div class="gallery-grid">
+                <img src="1.jpg" onclick="openModal(0)">
+                <img src="2.jpg" onclick="openModal(1)">
+                <img src="3.jpg" onclick="openModal(2)">
+                <img src="4.jpg" onclick="openModal(3)">
+                <img src="5.jpg" onclick="openModal(4)">
+                <img src="6.jpg" onclick="openModal(5)">
+                <img src="7.jpg" onclick="openModal(6)">
+                <img src="8.jpg" onclick="openModal(7)">
+                <img src="9.jpg" onclick="openModal(8)">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="greeting-title">L O C A T I O N</div>
+            <p style="font-weight:bold; font-size:1.1rem;">나인트리 바이 파르나스 서울 판교 2층</p>
+            <p style="font-size:0.9rem; color:#888;">경기 성남시 수정구 창업로 18</p>
+
+            <div id="naver-map"></div>
+            
+            <div class="map-area">
+                <img src="map.jpg" alt="지도 약도" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+
+            <div class="btn-group">
+                <a href="https://place.map.kakao.com/155564003" target="_blank" class="btn">카카오맵 보기</a>
+                <a href="https://naver.me/FTXwfsZE" target="_blank" class="btn btn-outline">네이버지도 보기</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="greeting-title">마음 전하실 곳</div>
+            <div class="account-box">
+                <p>축하의 마음을 담아 보내주세요</p>
+                <div class="account-number" onclick="copyAccount('3333024229117')">
+                    카카오뱅크 3333-02-4229117 <br>(예금주: 강윤기)
+                    <br><span style="font-size:0.8rem; color:#999; font-weight:normal;">(터치하면 복사됩니다)</span>
+                </div>
+                <div id="copy-msg" class="copy-alert">계좌번호가 복사되었습니다!</div>
+            </div>
+        </div>
+
+        <footer>
+            Share the joy with us
+        </footer>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="arrow prev" onclick="changeSlide(-1)">&#10094;</div>
+        <img class="modal-content" id="modalImg">
+        <div class="arrow next" onclick="changeSlide(1)">&#10095;</div>
+    </div>
+
+    <script>
+        // -------------------------
+        // 1. 네이버 지도 설정
+        // -------------------------
+        // 호텔 파라다이스 위치 (위도, 경도) - 구글맵 등에서 확인하여 수정하세요
+        var placeLat = 37.413371; 
+        var placeLng = 127.098628;
+ 
+        // 지도가 로드되지 않을 경우를 대비한 예외처리 (API ID 없을 때)
+        try {
+            var mapOptions = {
+                center: new naver.maps.LatLng(placeLat, placeLng),
+                zoom: 16 // 확대 레벨
+            };
+            var map = new naver.maps.Map('naver-map', mapOptions);
+
+            // 마커 찍기
+            var marker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(placeLat, placeLng),
+                map: map
+            });
+        } catch (e) {
+            console.log("네이버 지도 API 키가 없거나 설정 오류입니다.");
+            document.getElementById('naver-map').innerHTML = "<div style='padding-top:130px;'>지도를 불러오려면 API Key가 필요합니다.<br>(또는 이미지로 대체하세요)</div>";
+        }
+
+        // -------------------------
+        // 2. 갤러리 모달(팝업) 기능
+        // -------------------------
+        // 사진 경로 배열 (파일명 수정 시 여기도 같이 수정해줘야 함)
+        var images = [
+            "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg"
+        ];
+        var currentIdx = 0;
+
+        function openModal(idx) {
+            currentIdx = idx;
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImg");
+            
+            modal.style.display = "flex"; // 팝업 열기
+            modalImg.src = images[currentIdx]; // 클릭한 사진 보여주기
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        function changeSlide(n) {
+            currentIdx += n;
+            // 처음보다 뒤로 가면 맨 마지막 사진으로
+            if (currentIdx < 0) { currentIdx = images.length - 1; }
+            // 마지막보다 앞으로 가면 맨 처음 사진으로
+            if (currentIdx >= images.length) { currentIdx = 0; }
+            
+            document.getElementById("modalImg").src = images[currentIdx];
+        }
+
+        // 모달 바깥 영역(검은 배경) 클릭 시 닫기
+        window.onclick = function(event) {
+            var modal = document.getElementById("imageModal");
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // 계좌번호 복사 스크립트
+        function copyAccount(accNum) {
+            navigator.clipboard.writeText(accNum).then(() => {
+                const msg = document.getElementById('copy-msg');
+                msg.style.display = 'block';
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                }, 2000);
+            }).catch(err => {
+                alert('복사에 실패했습니다. 직접 입력해주세요.');
+            });
+        }
+    </script>
+</body>
+</html>
