@@ -260,13 +260,19 @@
             });
         }
 
-        // 카카오 초기화 - 한 번만 실행되어야 함
-        if (!Kakao.isInitialized()) {
-            Kakao.init('bf94825a5ef698f2b4ab0e1e9d267f62'); // 발급받은 JavaScript 키 입력
-        }
-
         // 2. 카카오톡 공유 함수
         function sendKakao() {
+            // 1. Kakao 객체가 존재하는지 먼저 확인 (에러 방지)
+            if (typeof Kakao === 'undefined') {
+                alert('카카오 SDK를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+                return;
+            }
+
+            // 2. 초기화가 안 되어 있다면 이때 실행
+            if (!Kakao.isInitialized()) {
+                Kakao.init('bf94825a5ef698f2b4ab0e1e9d267f62');
+            }
+
             Kakao.Share.sendDefault({
                     objectType: 'feed',
                     content: {
